@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "535535179784",
+    "project_id": "projet-devmobile-79f0d",
+    "storage_bucket": "projet-devmobile-79f0d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:535535179784:android:b0324184e72f44864fd9bd",
+        "android_client_info": {
+          "package_name": "fr.isen.becassematteo.projet_devmobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAldcZ_lxPVcLwjJpYUC6BXFYK5yl6Nz1E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
