@@ -9,15 +9,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import com.google.firebase.auth.FirebaseAuth // L'import magique de Firebase !
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
-fun LoginScreen() {
+fun LoginScreen(onLoginSuccess: () -> Unit) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
     val context = LocalContext.current
-    // On initialise l'outil Firebase Authentication
     val auth = FirebaseAuth.getInstance()
 
     Column(
@@ -49,14 +48,15 @@ fun LoginScreen() {
         Button(
             onClick = {
                 if (email.isNotEmpty() && password.length >= 6) {
-                    // LE VRAI TEST EST ICI : On demande à Firebase de créer un compte
                     auth.createUserWithEmailAndPassword(email, password)
                         .addOnCompleteListener { task ->
                             if (task.isSuccessful) {
-                                // Si Firebase dit OUI
                                 Toast.makeText(context, "Bravo ! Compte créé sur Firebase !", Toast.LENGTH_LONG).show()
+
+                                // CETTE LIGNE DÉCLENCHE LE CHANGEMENT D'ÉCRAN :
+                                onLoginSuccess()
+
                             } else {
-                                // Si Firebase dit NON (ex: email déjà utilisé, mdp trop court...)
                                 Toast.makeText(context, "Erreur : ${task.exception?.message}", Toast.LENGTH_LONG).show()
                             }
                         }
