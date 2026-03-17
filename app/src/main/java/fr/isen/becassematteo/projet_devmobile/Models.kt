@@ -1,24 +1,30 @@
 package fr.isen.becassematteo.projet_devmobile
 
+import com.google.firebase.database.IgnoreExtraProperties
+
+@IgnoreExtraProperties
 data class Categorie(
     val categorie: String = "",
     val franchises: List<Franchise> = emptyList()
 )
 
+@IgnoreExtraProperties
 data class Franchise(
     val nom: String = "",
     val films: List<Film>? = null,
     val sous_sagas: List<SousSaga>? = null
 )
 
+@IgnoreExtraProperties
 data class SousSaga(
     val nom: String = "",
     val films: List<Film> = emptyList()
 )
 
+@IgnoreExtraProperties
 data class Film(
-    val numero: Int = 0,
     val titre: String = "",
-    val annee: Int? = null,
-    val genre: String? = null
+    val image: Any? = null, // Any? car l'URL peut être manquante ou mal formatée
+    val description: String = "",
+    val annee: Any? = null  // Any? car le prof a mis des Int et des String selon les films
 )
