@@ -3,16 +3,11 @@ package fr.isen.becassematteo.projet_devmobile
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 
-// Le reste de ta classe MainActivity ici...
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,18 +22,32 @@ fun DisneyAppNavigation() {
     val navController = rememberNavController()
 
     NavHost(navController = navController, startDestination = "login") {
+
+        // 1. Écran de Login
         composable("login") {
-            LoginScreen(onLoginSuccess = { navController.navigate("home") })
-        }
-        composable("home") {
-            // On passe la logique de clic ici
-            HomeScreen(onCategoryClick = { name ->
-                navController.navigate("franchises/$name")
+            LoginScreen(onLoginSuccess = {
+                navController.navigate("home")
             })
         }
-        composable("franchises/{catName}") { backStackEntry ->
-            val catName = backStackEntry.arguments?.getString("catName") ?: ""
-            FranchiseScreen(catName)
+
+        // 2. Écran d'accueil
+        composable("home") {
+            HomeScreen(onCategoryClick = { name ->
+                // CORRECTION : On a enlevé le 's' pour correspondre à la route suivante
+                navController.navigate("franchise/$name")
+            })
+        }
+
+        // 3. Écran de la liste des films
+        composable("franchise/{categoryName}") { backStackEntry ->
+            val categoryName = backStackEntry.arguments?.getString("categoryName") ?: ""
+            FranchiseScreen(categoryName = categoryName, navController = navController)
+        }
+
+        // 4. Écran de détails (Obligatoire pour ne pas crash au clic sur un film)
+        composable("detail/{filmTitre}") { backStackEntry ->
+            val titre = backStackEntry.arguments?.getString("filmTitre") ?: ""
+            DetailScreen(filmTitre = titre, navController = navController)
         }
     }
 }

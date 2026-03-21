@@ -25,6 +25,6 @@ data class SousSaga(
 data class Film(
     val titre: String = "",
     val image: Any? = null, // Any? car l'URL peut être manquante ou mal formatée
-    val description: String = "",
+    val description: String = "", // Champ important pour l'écran de détails
     val annee: Any? = null  // Any? car le prof a mis des Int et des String selon les films
 )
