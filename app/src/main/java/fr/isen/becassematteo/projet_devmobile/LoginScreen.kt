@@ -7,6 +7,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.google.firebase.auth.FirebaseAuth
@@ -15,24 +16,46 @@ import com.google.firebase.auth.FirebaseAuth
 fun LoginScreen(onLoginSuccess: () -> Unit) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var isLoginMode by remember { mutableStateOf(true) }
+
+    // Ajout d'un état de chargement pour éviter les clics multiples
+    var isLoading by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
     val auth = FirebaseAuth.getInstance()
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text(text = "DisneyStream - Test", style = MaterialTheme.typography.headlineMedium)
-        Spacer(modifier = Modifier.height(32.dp))
+        Text(
+            text = "DisneyStream",
+            style = MaterialTheme.typography.displaySmall,
+            fontWeight = FontWeight.ExtraBold,
+            color = MaterialTheme.colorScheme.primary
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            text = if (isLoginMode) "Ravi de vous revoir !" else "Bienvenue parmi nous",
+            style = MaterialTheme.typography.bodyLarge
+        )
+
+        Spacer(modifier = Modifier.height(40.dp))
 
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
             label = { Text("Email") },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true,
+            enabled = !isLoading
         )
+
         Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
@@ -40,33 +63,74 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
             onValueChange = { password = it },
             label = { Text("Mot de passe") },
             visualTransformation = PasswordVisualTransformation(),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true,
+            enabled = !isLoading
         )
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        Button(
-            onClick = {
-                if (email.isNotEmpty() && password.length >= 6) {
-                    auth.createUserWithEmailAndPassword(email, password)
-                        .addOnCompleteListener { task ->
-                            if (task.isSuccessful) {
-                                Toast.makeText(context, "Bravo ! Compte créé sur Firebase !", Toast.LENGTH_LONG).show()
+        if (isLoading) {
+            CircularProgressIndicator()
+        } else {
+            Button(
+                onClick = {
+                    // NETTOYAGE DES DONNÉES (enlève les espaces à la fin)
+                    val finalEmail = email.trim()
+                    val finalPassword = password.trim()
 
-                                // CETTE LIGNE DÉCLENCHE LE CHANGEMENT D'ÉCRAN :
-                                onLoginSuccess()
-
-                            } else {
-                                Toast.makeText(context, "Erreur : ${task.exception?.message}", Toast.LENGTH_LONG).show()
-                            }
+                    if (finalEmail.isNotEmpty() && finalPassword.length >= 6) {
+                        isLoading = true
+                        if (isLoginMode) {
+                            // MODE CONNEXION
+                            auth.signInWithEmailAndPassword(finalEmail, finalPassword)
+                                .addOnCompleteListener { task ->
+                                    isLoading = false
+                                    if (task.isSuccessful) {
+                                        onLoginSuccess()
+                                    } else {
+                                        Toast.makeText(context, "Erreur : Email ou mot de passe incorrect", Toast.LENGTH_LONG).show()
+                                    }
+                                }
+                        } else {
+                            // MODE INSCRIPTION
+                            auth.createUserWithEmailAndPassword(finalEmail, finalPassword)
+                                .addOnCompleteListener { task ->
+                                    isLoading = false
+                                    if (task.isSuccessful) {
+                                        Toast.makeText(context, "Compte créé !", Toast.LENGTH_SHORT).show()
+                                        onLoginSuccess()
+                                    } else {
+                                        Toast.makeText(context, "Erreur : ${task.exception?.message}", Toast.LENGTH_LONG).show()
+                                    }
+                                }
                         }
-                } else {
-                    Toast.makeText(context, "Remplissez les champs (mot de passe > 6 caractères)", Toast.LENGTH_SHORT).show()
-                }
-            },
-            modifier = Modifier.fillMaxWidth()
+                    } else {
+                        Toast.makeText(context, "Veuillez remplir les champs (MDP : 6 caractères min)", Toast.LENGTH_SHORT).show()
+                    }
+                },
+                modifier = Modifier.fillMaxWidth(),
+                shape = MaterialTheme.shapes.medium
+            ) {
+                Text(
+                    text = if (isLoginMode) "SE CONNECTER" else "CRÉER UN COMPTE",
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        TextButton(
+            onClick = { isLoginMode = !isLoginMode },
+            enabled = !isLoading
         ) {
-            Text("S'inscrire (Test Firebase)")
+            Text(
+                text = if (isLoginMode)
+                    "Pas encore de compte ? S'inscrire"
+                else
+                    "Déjà un compte ? Se connecter"
+            )
         }
     }
 }

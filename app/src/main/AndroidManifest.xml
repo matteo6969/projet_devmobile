@@ -14,7 +14,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Projet_devmobile"
+
         android:usesCleartextTraffic="true"
+
         tools:targetApi="31">
 
         <activity
@@ -22,6 +24,7 @@
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.Projet_devmobile"
+
             android:windowSoftInputMode="adjustResize">
 
             <intent-filter>
@@ -30,4 +33,5 @@
             </intent-filter>
         </activity>
     </application>
+
 </manifest>
