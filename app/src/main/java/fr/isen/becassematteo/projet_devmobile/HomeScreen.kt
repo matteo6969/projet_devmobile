@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -14,7 +16,7 @@ import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(onCategoryClick: (String) -> Unit) {
+fun HomeScreen(onCategoryClick: (String) -> Unit, onProfileClick: () -> Unit) {
     val categoriesDuProf = listOf(
         "Grandes Sagas",
         "Autres Franchises Disney",
@@ -25,15 +27,14 @@ fun HomeScreen(onCategoryClick: (String) -> Unit) {
         "Franchises Internationales"
     )
 
-    // Palette de couleurs style "Netflix"
-    val netflixBackground = Color(0xFF121212) // Noir profond
-    val netflixCardColor = Color(0xFF1E1E1E)  // Gris très foncé pour les cartes
-    val netflixRed = Color(0xFFE50914)        // Rouge caractéristique
+    val netflixBackground = Color(0xFF121212)
+    val netflixCardColor = Color(0xFF1E1E1E)
+    val netflixRed = Color(0xFFE50914)
     val netflixTextWhite = Color.White
     val netflixTextGray = Color(0xFFB3B3B3)
 
     Scaffold(
-        containerColor = netflixBackground, // On applique le fond noir à toute la page
+        containerColor = netflixBackground,
         topBar = {
             TopAppBar(
                 title = {
@@ -43,8 +44,17 @@ fun HomeScreen(onCategoryClick: (String) -> Unit) {
                         fontWeight = FontWeight.Bold
                     )
                 },
+                actions = {
+                    IconButton(onClick = onProfileClick) {
+                        Icon(
+                            imageVector = Icons.Default.Person,
+                            contentDescription = null,
+                            tint = netflixTextWhite
+                        )
+                    }
+                },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = netflixBackground // La barre d'en-tête devient noire aussi
+                    containerColor = netflixBackground
                 )
             )
         }
@@ -61,7 +71,7 @@ fun HomeScreen(onCategoryClick: (String) -> Unit) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable { onCategoryClick(nomCategorie) },
-                    shape = RoundedCornerShape(8.dp), // Des angles légèrement arrondis (moderne)
+                    shape = RoundedCornerShape(8.dp),
                     colors = CardDefaults.cardColors(
                         containerColor = netflixCardColor
                     ),
@@ -74,7 +84,7 @@ fun HomeScreen(onCategoryClick: (String) -> Unit) {
                             color = netflixTextWhite,
                             fontWeight = FontWeight.Bold
                         )
-                        Spacer(modifier = Modifier.height(4.dp)) // Petit espace
+                        Spacer(modifier = Modifier.height(4.dp))
                         Text(
                             text = "Voir les franchises >",
                             style = MaterialTheme.typography.bodyMedium,
