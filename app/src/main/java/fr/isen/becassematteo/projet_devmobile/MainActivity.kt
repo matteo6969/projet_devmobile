@@ -4,12 +4,16 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen // IMPORTANT
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        // 1. Installer le Splash Screen AVANT super.onCreate
+        installSplashScreen()
+
         super.onCreate(savedInstanceState)
         setContent {
             DisneyAppNavigation()
@@ -25,7 +29,10 @@ fun DisneyAppNavigation() {
 
         composable("login") {
             LoginScreen(onLoginSuccess = {
-                navController.navigate("home")
+                // Navigation vers Home en vidant la pile pour éviter de revenir au Login
+                navController.navigate("home") {
+                    popUpTo("login") { inclusive = true }
+                }
             })
         }
 
